@@ -1,0 +1,28 @@
+<html>
+
+<head>
+    <title>asd</title>
+    <script src="node_modules/lodash/lodash.js"></script>
+    <script src="node_modules/hammerjs/hammer.js"></script>
+    <script src="src/rollerpanel.js"></script>
+
+    <link rel="stylesheet" href="src/css/timepicker.css">
+</head>
+
+<body>
+    <div class="container" style="width:500px; height:480px; margin:auto;">
+        <div id="tp"></div>
+    </div>
+
+    <script>
+        var items = _.range(0,45).map(function(x){
+            return {
+                text:x+'',
+                value:x
+            };
+        });
+        var tp = new RollerPanel(document.getElementById('tp'),items,2);
+    </script>
+</body>
+
+</html>
