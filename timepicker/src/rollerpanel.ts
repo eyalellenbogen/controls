@@ -41,9 +41,10 @@ class RollerPanel {
     private _dataItems: DataItem[];
     private _rollerItems: RollerItem[] = [];
 
-    private _animOn: boolean = false;
     private _animDelta: number = 0;
     private _animLastDelta: number = 0;
+    private _animState: AnimationState = AnimationState.Stopped;
+    private _animFadeFactor: number = 0.95;
 
     constructor(target: HTMLElement, data: DataItem[], selectedValue: any) {
         this._dataItems = data;
@@ -101,26 +102,37 @@ class RollerPanel {
     }
 
     private renderFrame = () => {
-        if (!this._animOn) {
-            // slide = true;
-            // slideToSelected(time);
-            return;
-        };
+        if (this._animState == AnimationState.Stopped) return;
+        if (this._animState == AnimationState.EasingOut) {
+            //manipulate delta to fit east
+            this._animDelta = this._animDelta * this._animFadeFactor;
+
+        } else if (this._animState == AnimationState.MovingToSelected) {
+            //manipulate delta to move to selected item
+        }
+
         if (this._animDelta) {
+            if (Math.abs(this._animDelta) < 1) {
+                this._animDelta = 0;
+                this._animState = AnimationState.Stopped;
+            }
             this.move(this._animDelta - this._animLastDelta);
             this._animLastDelta = this._animDelta;
         }
         window.requestAnimationFrame(this.renderFrame);
     }
 
+    private animateToSelected = () => {
+
+    }
+
     private startAnimationFade = () => {
-        this._animLastDelta = 0;
-        this._animOn = false;
+        this._animState = AnimationState.EasingOut;
     }
 
     private initAnimation = (initialDelta: number) => {
-        this._animOn = true;
         this._animDelta = initialDelta;
+        this._animState=AnimationState.Moving;
         window.requestAnimationFrame(this.renderFrame);
     }
 
@@ -310,4 +322,11 @@ class RollerPanel {
             relativeOffset: relativeOffset
         };
     }
+}
+
+enum AnimationState {
+    Moving,
+    EasingOut,
+    MovingToSelected,
+    Stopped
 }
